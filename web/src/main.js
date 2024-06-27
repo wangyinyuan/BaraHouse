@@ -1,5 +1,6 @@
 import conf from "./constants";
 import { k } from "./kaboomCtx";
+import { displayDialogue } from "./utils";
 
 // load sprites
 k.loadSprite("spritesheet", "/spritesheet.png", {
@@ -38,7 +39,7 @@ k.scene("main", async () => {
   const mapData = await fetch("/map.json").then((res) => res.json());
   const layers = mapData.layers;
 
-  const map = k.make([k.sprite("map"), k.pos(0), k.scale(conf.scaleFactor)]);
+  const map = k.add([k.sprite("map"), k.pos(0), k.scale(conf.scaleFactor)]);
 
   const player = k.make([
     k.sprite("spritesheet", {
@@ -50,7 +51,8 @@ k.scene("main", async () => {
     k.body(),
     k.anchor("center"),
     k.pos(),
-    k.scale(conf.scaleFactor), {
+    k.scale(conf.scaleFactor),
+    {
       speed: 250,
       direction: "down",
       isInDialogue: false,
@@ -74,11 +76,43 @@ k.scene("main", async () => {
           player.onCollide(boundary.name, () => {
             player.isInDialogue = true;
             // TODO: 创建对话框
-          })
+            console.log("Creating dialogue...");
+            displayDialogue(
+              "Hello, world!",
+              () => (player.isInDialogue = false)
+            );
+          });
+        }
+      }
+
+      continue;
+    }
+
+    if (layer.name === "spawnpoints") {
+      for (const entity of layer.objects) {
+        if (entity.name === "player") {
+          player.pos = k.vec2(
+            (map.pos.x + entity.x) * conf.scaleFactor,
+            (map.pos.y + entity.y) * conf.scaleFactor
+          );
+          k.add(player);
+          continue;
         }
       }
     }
   }
+
+  k.onUpdate(() => {
+    k.camPos(player.pos.x, player.pos.y + 100);
+  })
+
+  // player movement
+  k.onMouseDown((mouseBtn) => {
+    if (mouseBtn !== "left" || player.isInDialogue) return;
+
+    const worldMousePos = k.toWorld(k.mousePos());
+    player.moveTo(worldMousePos, player.speed);
+  });
 });
 
 k.go("main");

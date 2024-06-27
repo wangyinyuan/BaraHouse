@@ -1,4 +1,4 @@
-export function displayDialogue(text, onDisplayEnd) {
+export function displayDialogue(text, onDisplayEnd = () => {}) {
   const dialogueUI = document.querySelector("#textbox-container");
   const dialogue = document.querySelector("#dialogue");
 
@@ -16,4 +16,17 @@ export function displayDialogue(text, onDisplayEnd) {
 
     clearInterval(intervalRef);
   }, 10);
+
+  const closeBtn = document.querySelector("#close");
+
+  function onCloseBtnClick() {
+    onDisplayEnd();
+    dialogueUI.style.display = "none";
+    dialogue.innerHTML = "";
+    if (intervalRef) clearInterval(intervalRef);
+    console.log("intervalRef", intervalRef);
+    closeBtn.removeEventListener("click", onCloseBtnClick);
+  }
+
+  closeBtn.addEventListener("click", onCloseBtnClick);
 }
