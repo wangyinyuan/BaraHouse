@@ -1,5 +1,87 @@
+@font-face {
+  font-family: "ShiftyNotes";
+  src: url("/ShiftyNotesRegular.ttf");
+}
+
+@font-face {
+  font-family: monogram;
+  src: url("/monogram.ttf");
+}
+
+:root {
+  font-size: 10px;
+}
+
+body {
+  font-family: ShiftyNotes, monogram, monospace;
+  font-size: 2.2rem;
+  overflow: hidden;
+  margin: 0;
+}
+
 #app {
+  position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
+}
+
+#ui {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.note {
+  position: absolute;
+  color: rgb(218, 216, 216);
+  left: 5%;
+  user-select: none;
+}
+
+#textbox-container {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+
+#textbox {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 2vh;
+  min-height: 10vh;
+  background-color: white;
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  transition: all 0.5s;
+  filter: drop-shadow(0 0 0.75rem rgba(255, 255, 255, 0.453));
+}
+
+#dialogue {
+  flex: 1;
+}
+
+.ui-text {
+  margin: 0;
+}
+
+.ui-close-btn {
+  border-style: none;
+  border-radius: 5px;
+  padding: 1rem;
+  font-family: inherit;
+  font-size: 1.5rem;
+}
+
+.btn-container {
+  align-self: flex-end;
+  margin-top: 1rem;
 }
