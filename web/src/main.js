@@ -38,6 +38,18 @@ k.loadSprite("spritesheet", "/spritesheet.png", {
 k.loadSprite("map", "/map.png");
 k.setBackground(k.Color.fromHex("#311047"));
 
+// 监听 F1 debug
+function toggleDebug(event) {
+  if (event.key === "F2") {
+    event.preventDefault();
+    console.log("Before toggle:", k.debug.inspect);
+    k.debug.inspect = !k.debug.inspect;
+    console.log("After toggle:", k.debug.inspect);
+  }
+}
+
+document.addEventListener("keydown", toggleDebug);
+
 k.scene("main", async () => {
   const mapData = await fetch("/map.json").then((res) => res.json());
   const layers = mapData.layers;
@@ -116,6 +128,8 @@ k.scene("main", async () => {
     const worldMousePos = k.toWorld(k.mousePos());
     player.moveTo(worldMousePos, player.speed);
   });
+
+
 });
 
 k.go("main");
