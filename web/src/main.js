@@ -2,6 +2,9 @@ import conf from "./constants";
 import { k } from "./kaboomCtx";
 import { displayDialogue } from "./utils";
 
+const testText =
+  "A pixel art cyberpunk-style capybara is sitting in front of a large computer screen, coding. The capybara is facing away from the screen, with its back to the viewer. The screen is prominently displayed in the image, showing lines of code. The capybara has neon-colored fur with blue and purple highlights, glowing cybernetic enhancements, and wears futuristic goggles. The background features a high-tech room with holographic displays and neon lights. The overall atmosphere is dark with vibrant, glowing elements, giving it a distinctive cyberpunk vibe.";
+
 // load sprites
 k.loadSprite("spritesheet", "/spritesheet.png", {
   sliceX: 39,
@@ -78,7 +81,7 @@ k.scene("main", async () => {
             // TODO: 创建对话框
             console.log("Creating dialogue...");
             displayDialogue(
-              "Hello, world!",
+              testText,
               () => (player.isInDialogue = false)
             );
           });
@@ -104,7 +107,7 @@ k.scene("main", async () => {
 
   k.onUpdate(() => {
     k.camPos(player.pos.x, player.pos.y + 100);
-  })
+  });
 
   // player movement
   k.onMouseDown((mouseBtn) => {
