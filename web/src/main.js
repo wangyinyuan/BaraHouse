@@ -1,6 +1,6 @@
 import conf from "./constants";
 import { k } from "./kaboomCtx";
-import { displayDialogue } from "./utils";
+import { displayDialogue, setCamScale } from "./utils";
 
 const testText =
   "A pixel art cyberpunk-style capybara is sitting in front of a large computer screen, coding. The capybara is facing away from the screen, with its back to the viewer. The screen is prominently displayed in the image, showing lines of code. The capybara has neon-colored fur with blue and purple highlights, glowing cybernetic enhancements, and wears futuristic goggles. The background features a high-tech room with holographic displays and neon lights. The overall atmosphere is dark with vibrant, glowing elements, giving it a distinctive cyberpunk vibe.";
@@ -92,10 +92,7 @@ k.scene("main", async () => {
             player.isInDialogue = true;
             // TODO: 创建对话框
             console.log("Creating dialogue...");
-            displayDialogue(
-              testText,
-              () => (player.isInDialogue = false)
-            );
+            displayDialogue(testText, () => (player.isInDialogue = false));
           });
         }
       }
@@ -117,6 +114,12 @@ k.scene("main", async () => {
     }
   }
 
+  setCamScale(k);
+
+  k.onResize(() => {
+    setCamScale(k);
+  });
+
   k.onUpdate(() => {
     k.camPos(player.pos.x, player.pos.y + 100);
   });
@@ -127,9 +130,55 @@ k.scene("main", async () => {
 
     const worldMousePos = k.toWorld(k.mousePos());
     player.moveTo(worldMousePos, player.speed);
+
+    const mouseAngle = player.pos.angle(worldMousePos);
+    const lowerBound = 50;
+    const upperBound = 125;
+
+    console.log("mouseAngle is: ", mouseAngle);
+
+    if (mouseAngle > lowerBound && mouseAngle < upperBound && player.curAnim() !== "walk-up") {
+      player.play("walk-up");
+      player.direction = "up";
+      return;
+    }
+
+    if (mouseAngle < -lowerBound && mouseAngle > -upperBound && player.curAnim() !== "walk-down") {
+      player.play("walk-down");
+      player.direction = "down";
+      return;
+    }
+
+    if (Math.abs(mouseAngle) > upperBound) {
+      player.flipX = false;
+      if (player.curAnim() !== "walk-side") {
+        player.play("walk-side");
+      }
+      player.direction = "right";
+      return;
+    }
+
+    if (Math.abs(mouseAngle) < lowerBound) {
+      player.flipX = true;
+      if (player.curAnim() !== "walk-side") {
+        player.play("walk-side");
+      }
+      player.direction = "left";
+      return;
+    }
   });
 
+  function stopAnims() {
+    if (player.direction === "down") {
+      player.play("idle-down");
+    } else if (player.direction === "up") {
+      player.play("idle-up");
+    } else {
+      player.play("idle-side");
+    }
+  }
 
+  k.onMouseRelease(stopAnims);
 });
 
 k.go("main");
